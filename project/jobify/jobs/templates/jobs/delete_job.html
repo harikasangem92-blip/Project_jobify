@@ -1,0 +1,53 @@
+{% extends 'jobs/base.html' %}
+{% load static %}
+
+{% block title %}Delete Job - Jobify{% endblock %}
+
+{% block content %}
+<section class="delete-job-section py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card border-danger shadow-lg">
+                    <div class="card-header bg-danger text-white fw-bold">
+                        <i class="fas fa-exclamation-triangle"></i> Delete Job Posting
+                    </div>
+                    <div class="card-body p-5">
+                        <div class="alert alert-danger mb-4">
+                            <strong>Warning!</strong> This action cannot be undone.
+                        </div>
+                        
+                        <p class="mb-3">
+                            Are you sure you want to delete the job posting:
+                        </p>
+                        
+                        <div class="card bg-light mb-4">
+                            <div class="card-body">
+                                <h5 class="fw-bold text-danger mb-2">{{ job.title }}</h5>
+                                <p class="text-muted small mb-0">
+                                    <i class="fas fa-building"></i> {{ job.employer.employerprofile.company_name }}
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <p class="text-muted small">
+                            <i class="fas fa-info-circle"></i> 
+                            All applications for this job will also be deleted.
+                        </p>
+                        
+                        <form method="post" class="d-grid gap-2">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-lg fw-bold">
+                                <i class="fas fa-trash"></i> Yes, Delete This Job
+                            </button>
+                            <a href="{% url 'employer_dashboard' %}" class="btn btn-outline-secondary">
+                                Cancel
+                            </a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

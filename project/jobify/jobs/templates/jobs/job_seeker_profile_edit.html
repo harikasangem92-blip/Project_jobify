@@ -1,0 +1,146 @@
+{% extends 'jobs/base.html' %}
+{% load static %}
+
+{% block title %}Edit Profile - Jobify{% endblock %}
+
+{% block content %}
+<section class="edit-profile-section py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-lg">
+                    <div class="card-header bg-primary text-white fw-bold">
+                        <i class="fas fa-user-edit"></i> Edit Your Profile
+                    </div>
+                    <div class="card-body p-5">
+                        <ul class="nav nav-tabs mb-4" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="personal-tab" data-bs-toggle="tab" 
+                                        data-bs-target="#personal" type="button" role="tab">
+                                    <i class="fas fa-user"></i> Personal Info
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="profile-tab" data-bs-toggle="tab" 
+                                        data-bs-target="#profile" type="button" role="tab">
+                                    <i class="fas fa-briefcase"></i> Profile Details
+                                </button>
+                            </li>
+                        </ul>
+                        
+                        <div class="tab-content">
+                            <!-- Personal Info Tab -->
+                            <div class="tab-pane fade show active" id="personal" role="tabpanel">
+                                <form method="post" enctype="multipart/form-data" novalidate>
+                                    {% csrf_token %}
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="{{ user_form.first_name.id_for_label }}" class="form-label fw-bold">First Name</label>
+                                            {{ user_form.first_name }}
+                                            {% if user_form.first_name.errors %}
+                                                <div class="invalid-feedback d-block">{{ user_form.first_name.errors }}</div>
+                                            {% endif %}
+                                        </div>
+                                        
+                                        <div class="col-md-6 mb-3">
+                                            <label for="{{ user_form.last_name.id_for_label }}" class="form-label fw-bold">Last Name</label>
+                                            {{ user_form.last_name }}
+                                            {% if user_form.last_name.errors %}
+                                                <div class="invalid-feedback d-block">{{ user_form.last_name.errors }}</div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="{{ user_form.email.id_for_label }}" class="form-label fw-bold">Email Address</label>
+                                        {{ user_form.email }}
+                                        {% if user_form.email.errors %}
+                                            <div class="invalid-feedback d-block">{{ user_form.email.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="{{ user_form.phone.id_for_label }}" class="form-label fw-bold">Phone Number</label>
+                                        {{ user_form.phone }}
+                                        {% if user_form.phone.errors %}
+                                            <div class="invalid-feedback d-block">{{ user_form.phone.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="{{ user_form.profile_picture.id_for_label }}" class="form-label fw-bold">Profile Picture</label>
+                                        {{ user_form.profile_picture }}
+                                        {% if user_form.profile_picture.errors %}
+                                            <div class="invalid-feedback d-block">{{ user_form.profile_picture.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                            </div>
+                            
+                            <!-- Profile Details Tab -->
+                            <div class="tab-pane fade" id="profile" role="tabpanel">
+                                    <div class="mb-3">
+                                        <label for="{{ profile_form.resume.id_for_label }}" class="form-label fw-bold">Resume (PDF, DOC, DOCX)</label>
+                                        {{ profile_form.resume }}
+                                        {% if profile_form.resume.errors %}
+                                            <div class="invalid-feedback d-block">{{ profile_form.resume.errors }}</div>
+                                        {% endif %}
+                                        {% if profile.resume %}
+                                            <small class="text-muted d-block mt-2">
+                                                Current: <a href="{{ profile.resume.url }}" target="_blank">View Resume</a>
+                                            </small>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="{{ profile_form.skills.id_for_label }}" class="form-label fw-bold">Skills</label>
+                                        {{ profile_form.skills }}
+                                        {% if profile_form.skills.errors %}
+                                            <div class="invalid-feedback d-block">{{ profile_form.skills.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="{{ profile_form.bio.id_for_label }}" class="form-label fw-bold">Bio</label>
+                                        {{ profile_form.bio }}
+                                        {% if profile_form.bio.errors %}
+                                            <div class="invalid-feedback d-block">{{ profile_form.bio.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="{{ profile_form.experience_years.id_for_label }}" class="form-label fw-bold">Years of Experience</label>
+                                            {{ profile_form.experience_years }}
+                                            {% if profile_form.experience_years.errors %}
+                                                <div class="invalid-feedback d-block">{{ profile_form.experience_years.errors }}</div>
+                                            {% endif %}
+                                        </div>
+                                        
+                                        <div class="col-md-6 mb-3">
+                                            <label for="{{ profile_form.location.id_for_label }}" class="form-label fw-bold">Location</label>
+                                            {{ profile_form.location }}
+                                            {% if profile_form.location.errors %}
+                                                <div class="invalid-feedback d-block">{{ profile_form.location.errors }}</div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg fw-bold">
+                                <i class="fas fa-save"></i> Save Changes
+                            </button>
+                            <a href="{% url 'job_seeker_dashboard' %}" class="btn btn-outline-secondary">
+                                Back to Dashboard
+                            </a>
+                        </div>
+                    </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

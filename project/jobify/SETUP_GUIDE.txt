@@ -1,0 +1,760 @@
+"""
+Jobify - Complete Setup and Deployment Guide
+=============================================
+
+This document provides step-by-step instructions for setting up,
+configuring, and deploying the Jobify job portal application.
+"""
+
+# ============================================================================
+# PART 1: LOCAL DEVELOPMENT SETUP
+# ============================================================================
+
+"""
+STEP 1: Extract the Project
+─────────────────────────────
+The project has been created at: d:\nextgen_4.0\project\jobify
+
+Open Command Prompt/PowerShell and navigate to:
+  cd d:\nextgen_4.0\project\jobify
+"""
+
+# ============================================================================
+# PART 2: VIRTUAL ENVIRONMENT
+# ============================================================================
+
+"""
+STEP 2: Create Virtual Environment
+─────────────────────────────────────
+
+On Windows (PowerShell):
+  python -m venv venv
+  venv\Scripts\Activate.ps1
+
+On Windows (Command Prompt):
+  python -m venv venv
+  venv\Scripts\activate
+
+On macOS/Linux:
+  python3 -m venv venv
+  source venv/bin/activate
+
+You should see (venv) in your terminal prompt after activation.
+"""
+
+# ============================================================================
+# PART 3: INSTALL DEPENDENCIES
+# ============================================================================
+
+"""
+STEP 3: Install Python Packages
+──────────────────────────────────
+
+With virtual environment activated:
+  pip install --upgrade pip
+  pip install -r requirements.txt
+
+This installs:
+  - Django 4.2.7
+  - Pillow (for image handling)
+  - python-dotenv (for environment variables)
+
+Verify installation:
+  pip list
+"""
+
+# ============================================================================
+# PART 4: DATABASE SETUP
+# ============================================================================
+
+"""
+STEP 4: Run Database Migrations
+────────────────────────────────
+
+With virtual environment activated:
+
+A) Create migration files:
+   python manage.py makemigrations
+
+B) Apply migrations:
+   python manage.py migrate
+
+   You should see output like:
+   Operations to perform:
+     Apply all migrations: admin, auth, contenttypes, sessions, jobs
+   
+   Migration names and dates will be listed.
+   After completion: OK
+
+This creates the SQLite database (db.sqlite3) with all tables.
+"""
+
+# ============================================================================
+# PART 5: CREATE ADMIN ACCOUNT
+# ============================================================================
+
+"""
+STEP 5: Create Superuser (Admin)
+──────────────────────────────────
+
+Run this command:
+  python manage.py createsuperuser
+
+You'll be prompted to enter:
+  Username: admin
+  Email: admin@example.com
+  Password: (enter a password)
+  Password (again): (confirm password)
+  
+  Note: Password won't display as you type for security
+
+Example:
+  Username: admin
+  Email admin@admin.com [admin@admin.com]: admin@jobify.com
+  Password: 
+  Password (again):
+  Superuser created successfully.
+
+Save these credentials - you'll need them to access /admin/
+"""
+
+# ============================================================================
+# PART 6: START DEVELOPMENT SERVER
+# ============================================================================
+
+"""
+STEP 6: Run the Development Server
+────────────────────────────────────
+
+Make sure virtual environment is activated, then:
+  python manage.py runserver
+
+You should see output:
+  Starting development server at http://127.0.0.1:8000/
+  Quit the server with CTRL-BREAK.
+
+Access in browser: http://localhost:8000/
+
+To stop server: Press Ctrl+C in terminal
+"""
+
+# ============================================================================
+# PART 7: LOADING SAMPLE DATA (OPTIONAL)
+# ============================================================================
+
+"""
+STEP 7: Load Sample Data (Optional)
+─────────────────────────────────────
+
+To populate the database with sample jobs and users:
+
+Option A - Using Django Shell:
+  python manage.py shell
+  exec(open('load_sample_data.py').read())
+
+Option B - Using Python directly:
+  python load_sample_data.py
+
+This creates:
+  ✓ 1 sample job seeker user
+  ✓ 1 sample employer with company
+  ✓ 4 sample job listings
+  ✓ Ready for testing
+
+Sample credentials will be displayed in the terminal.
+"""
+
+# ============================================================================
+# PART 8: FIRST-TIME USER GUIDE
+# ============================================================================
+
+"""
+STEP 8: Access the Application
+─────────────────────────────────
+
+After starting the server, visit:
+
+1. Homepage:
+   http://localhost:8000/
+
+2. Register as Job Seeker:
+   http://localhost:8000/register/job-seeker/
+   
+   Create account with:
+   - Email
+   - First Name
+   - Last Name
+   - Phone
+   - Skills
+   - Password
+
+3. Register as Employer:
+   http://localhost:8000/register/employer/
+   
+   Create account with:
+   - Email
+   - Company Name
+   - Company Description (optional)
+   - Website (optional)
+   - Password
+
+4. Login:
+   http://localhost:8000/login/
+   - Use email and password
+
+5. Admin Panel:
+   http://localhost:8000/admin/
+   - Use superuser credentials
+   - Manage users, jobs, applications
+"""
+
+# ============================================================================
+# PART 9: FILE UPLOADS (RESUMES)
+# ============================================================================
+
+"""
+STEP 9: Resume Upload Setup
+──────────────────────────────
+
+Resumes are stored in: media/resumes/
+
+For development:
+  - Files are served automatically
+  - Check 'media' folder for uploads
+
+For production:
+  - Configure Nginx/Apache to serve media files
+  - Or use cloud storage (S3, Google Cloud, etc.)
+"""
+
+# ============================================================================
+# PART 10: CUSTOMIZATION GUIDE
+# ============================================================================
+
+"""
+STEP 10: Customize Your Application
+──────────────────────────────────────
+
+COLORS & STYLING:
+  Edit: static/css/style.css
+  
+  Key variables:
+  --primary-color: #0056b3 (buttons, links)
+  --success-color: #28a745 (positive actions)
+  --danger-color: #dc3545 (delete, reject)
+
+COMPANY INFORMATION:
+  Edit: jobs/templates/jobs/base.html (footer section)
+  Update contact info, links, social media
+
+PAGES & CONTENT:
+  Edit HTML files in: jobs/templates/jobs/
+  base.html - Main layout
+  home.html - Homepage
+  contact.html - Contact page
+
+SETTINGS:
+  Edit: jobify_project/settings.py
+  
+  Important settings:
+  - DEBUG - Turn off for production
+  - SECRET_KEY - Change for production
+  - TIME_ZONE - Set your timezone
+  - LANGUAGE_CODE - Set language
+"""
+
+# ============================================================================
+# PART 11: DATABASE OPERATIONS
+# ============================================================================
+
+"""
+STEP 11: Database Operations
+──────────────────────────────
+
+BACKUP DATABASE:
+  python manage.py dumpdata > backup.json
+
+RESTORE DATABASE:
+  python manage.py loaddata backup.json
+
+RESET DATABASE (WARNING: Deletes all data):
+  python manage.py flush
+  python manage.py migrate
+
+CREATE FIXTURES (Sample data):
+  python manage.py dumpdata jobs > jobs_data.json
+
+EXPORT CSV (Need additional setup):
+  Requires django-import-export package
+  pip install django-import-export
+"""
+
+# ============================================================================
+# PART 12: TROUBLESHOOTING
+# ============================================================================
+
+"""
+STEP 12: Common Issues & Solutions
+─────────────────────────────────────
+
+ISSUE 1: "Port 8000 already in use"
+SOLUTION:
+  Use different port:
+    python manage.py runserver 8080
+  
+  Or find Python process:
+    On Windows: netstat -ano | findstr :8000
+    On Linux: lsof -i :8000
+
+ISSUE 2: Static files not loading (CSS/JS)
+SOLUTION:
+  In development, Django serves them automatically
+  If not working:
+    python manage.py collectstatic --clear
+    Refresh browser (Ctrl+Shift+R)
+
+ISSUE 3: Image uploads not working
+SOLUTION:
+  Check permissions on 'media' folder
+  Ensure MEDIA_ROOT is configured in settings
+  Path: jobify_project/settings.py
+
+ISSUE 4: Migration errors
+SOLUTION:
+  Reset migrations:
+    python manage.py migrate --fake-initial
+  Or delete db.sqlite3 and start fresh:
+    del db.sqlite3 (Windows)
+    rm db.sqlite3 (Linux/Mac)
+    python manage.py migrate
+
+ISSUE 5: "ModuleNotFoundError: No module named 'XXX'"
+SOLUTION:
+  Install requirements:
+    pip install -r requirements.txt
+  Verify virtual environment is activated (see venv) in prompt
+
+ISSUE 6: Form validation errors
+SOLUTION:
+  Check browser console (F12 > Console)
+  Check Django server output
+  Ensure all required fields are filled
+  Check file upload formats (PDF,DOC,DOCX for resumes)
+"""
+
+# ============================================================================
+# PART 13: ADMIN PANEL FEATURES
+# ============================================================================
+
+"""
+STEP 13: Admin Panel (http://localhost:8000/admin/)
+──────────────────────────────────────────────────────
+
+MANAGE USERS:
+  Users > View all custom users
+  - View roles (Job Seeker, Employer, Admin)
+  - Block/activate users
+  - Edit user information
+  - Delete users
+
+MANAGE JOBS:
+  Jobs > View all job postings
+  - Filter by employer, location, status
+  - Create, edit, delete jobs
+  - View application count for each job
+  - Mass edit jobs
+
+MANAGE APPLICATIONS:
+  Job Applications > View all applications
+  - Filter by status (Applied, Shortlisted, Rejected, Accepted)
+  - Update application status
+  - View applicant information
+
+MANAGE EMPLOYERS:
+  Employer Profiles > View all companies
+  - Verify companies
+  - Edit company information
+  - Delete profiles
+
+MANAGE MESSAGES:
+  Contact Messages > View form submissions
+  - Mark as read/unread
+  - Delete messages
+  - Filter by date
+
+MANAGE CONTACT MESSAGES:
+  Important for customer service
+"""
+
+# ============================================================================
+# PART 14: PRODUCTION DEPLOYMENT
+# ============================================================================
+
+"""
+STEP 14: Prepare for Production
+─────────────────────────────────
+
+BEFORE DEPLOYING:
+
+1. Settings (jobify_project/settings.py):
+   DEBUG = False
+   ALLOWED_HOSTS = ['yourdomain.com', 'www.yourdomain.com']
+   SECRET_KEY = 'generate-new-random-key'
+
+2. Database:
+   Use PostgreSQL or MySQL (not SQLite)
+   Create database and configure in settings
+
+3. Email:
+   Configure SMTP settings for sending emails
+   Set EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER, EMAIL_HOST_PASSWORD
+
+4. Static/Media:
+   Run: python manage.py collectstatic
+   Configure web server to serve static files
+
+5. Security:
+   - Enable HTTPS/SSL
+   - Set CSRF_COOKIE_SECURE = True
+   - Set SESSION_COOKIE_SECURE = True
+   - Configure CORS if needed
+
+6. Backups:
+   Set up regular database backups
+   Set up file backups
+
+DEPLOYMENT OPTIONS:
+  - Heroku (easy, limited free tier)
+  - PythonAnywhere (Python-focused)
+  - AWS (Full control, scalable)
+  - DigitalOcean (Affordable VPS)
+  - Render (Good for Django)
+
+WSGI SERVERS:
+  - Gunicorn (recommended)
+  - uWSGI
+  - Waitress
+
+WEB SERVERS:
+  - Nginx (recommended)
+  - Apache
+
+PROCESS MANAGERS:
+  - Supervisor
+  - Systemd
+  - Docker
+"""
+
+# ============================================================================
+# PART 15: ENVIRONMENT VARIABLES
+# ============================================================================
+
+"""
+STEP 15: Environment Variables (.env)
+────────────────────────────────────────
+
+Create .env file in project root:
+
+# Database
+DATABASE_ENGINE=django.db.backends.sqlite3
+DATABASE_NAME=db.sqlite3
+
+# Django
+DEBUG=True
+SECRET_KEY=your-random-secret-key-here
+
+# Allowed hosts
+ALLOWED_HOSTS=localhost,127.0.0.1
+
+# Email (optional)
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_HOST_USER=your-email@gmail.com
+EMAIL_HOST_PASSWORD=your-app-password
+
+# AWS S3 (for media files, optional)
+AWS_ACCESS_KEY_ID=your-key
+AWS_SECRET_ACCESS_KEY=your-secret
+
+To use in settings.py:
+  import os
+  from dotenv import load_dotenv
+  
+  load_dotenv()
+  
+  DEBUG = os.getenv('DEBUG', False)
+  SECRET_KEY = os.getenv('SECRET_KEY')
+"""
+
+# ============================================================================
+# PART 16: USEFUL DJANGO COMMANDS
+# ============================================================================
+
+"""
+STEP 16: Common Django Commands
+─────────────────────────────────
+
+# Migrations
+python manage.py makemigrations          # Create migration files
+python manage.py migrate                 # Apply migrations
+python manage.py migrate --fake-initial  # Force apply migrations
+python manage.py showmigrations          # Show migration status
+
+# Admin
+python manage.py createsuperuser         # Create admin account
+python manage.py changepassword username # Change user password
+
+# Database
+python manage.py dbshell                 # Open database shell
+python manage.py sqlflush                # Show SQL flush commands
+python manage.py dumpdata > backup.json  # Backup data
+python manage.py loaddata backup.json    # Restore data
+python manage.py flush                   # Clear all data (DANGEROUS)
+
+# Development
+python manage.py runserver               # Start dev server
+python manage.py runserver 0.0.0.0:8000  # Listen on all interfaces
+python manage.py shell                   # Python shell with Django
+
+# Static Files
+python manage.py collectstatic           # Collect all static files
+python manage.py collectstatic --clear   # Clear before collecting
+
+# Testing
+python manage.py test                    # Run tests
+python manage.py test jobs               # Test specific app
+
+# Extensions
+python manage.py createsuperuser         # Create new admin
+python manage.py help                    # List all commands
+"""
+
+# ============================================================================
+# PART 17: PROJECT STRUCTURE REFERENCE
+# ============================================================================
+
+"""
+STRUCTURE:
+
+jobify/
+├── jobify_project/               Django project config
+│   ├── __init__.py
+│   ├── settings.py              Global settings
+│   ├── urls.py                  URL routing
+│   ├── wsgi.py                  WSGI configuration
+│   └── asgi.py                  ASGI configuration
+│
+├── jobs/                        Main app
+│   ├── migrations/              Database migrations
+│   ├── templates/jobs/          HTML templates
+│   │   ├── base.html
+│   │   ├── home.html
+│   │   ├── login.html
+│   │   ├── register.html
+│   │   ├── job_list.html
+│   │   ├── job_detail.html
+│   │   ├── job_seeker_dashboard.html
+│   │   ├── employer_dashboard.html
+│   │   ├── post_job.html
+│   │   ├── apply_job.html
+│   │   ├── job_applicants.html
+│   │   ├── job_seeker_profile_edit.html
+│   │   ├── employer_profile_edit.html
+│   │   ├── contact.html
+│   │   ├── delete_job.html
+│   │   └── update_application_status.html
+│   ├── __init__.py
+│   ├── admin.py                 Admin interface
+│   ├── apps.py                  App config
+│   ├── forms.py                 Django forms
+│   ├── models.py                Database models
+│   ├── tests.py                 Unit tests
+│   ├── urls.py                  App URL routing
+│   └── views.py                 View functions
+│
+├── static/                      Static files
+│   ├── css/
+│   │   └── style.css
+│   └── js/
+│       └── script.js
+│
+├── media/                       User uploads
+│   ├── resumes/
+│   ├── profile_pictures/
+│   └── company_logos/
+│
+├── manage.py                    Django CLI
+├── requirements.txt             Python packages
+├── README.md                    Full documentation
+├── QUICKSTART.md               Quick setup guide
+├── SETUP_GUIDE.txt             This file
+└── load_sample_data.py         Sample data loader
+"""
+
+# ============================================================================
+# PART 18: FEATURES CHECKLIST
+# ============================================================================
+
+"""
+IMPLEMENTED FEATURES:
+
+Authentication & Authorization:
+  ✓ User registration (Job Seeker & Employer)
+  ✓ Email login
+  ✓ Password hashing
+  ✓ Role-based access control
+  ✓ Login/logout
+  ✓ Session management
+  ✓ CSRF protection
+
+User Management:
+  ✓ User profiles
+  ✓ Profile editing
+  ✓ Profile pictures
+  ✓ Phone numbers
+  ✓ User verification
+
+Job Seeker Features:
+  ✓ Complete profile
+  ✓ Resume upload
+  ✓ Skills listing
+  ✓ Experience tracking
+  ✓ Browse jobs
+  ✓ Search & filter jobs
+  ✓ Apply for jobs
+  ✓ View applications
+  ✓ Track application status
+  ✓ Dashboard
+
+Employer Features:
+  ✓ Company profile
+  ✓ Company logo
+  ✓ Company information
+  ✓ Post jobs
+  ✓ Edit jobs
+  ✓ Delete jobs
+  ✓ View applicants
+  ✓ Shortlist candidates
+  ✓ Reject candidates
+  ✓ Dashboard with statistics
+
+Job Features:
+  ✓ Job title
+  ✓ Job description
+  ✓ Required skills
+  ✓ Salary range
+  ✓ Location
+  ✓ Job type (Full-time, Part-time, Internship, Remote, Contract)
+  ✓ Experience requirement
+  ✓ Application deadline
+  ✓ Vacancies
+  ✓ Job status
+
+Admin Features:
+  ✓ Django admin panel
+  ✓ Manage users
+  ✓ Manage employers
+  ✓ Manage jobs
+  ✓ Manage applications
+  ✓ Manage contact messages
+  ✓ System statistics
+
+UI/UX Features:
+  ✓ Responsive design
+  ✓ Mobile-friendly
+  ✓ Clean professional layout
+  ✓ Bootstrap 5 styling
+  ✓ Navigation menu
+  ✓ Footer
+  ✓ Error messages
+  ✓ Success notifications
+  ✓ Forms with validation
+  ✓ Pagination
+
+Other Features:
+  ✓ Contact form
+  ✓ Job search by keyword & location
+  ✓ Filters (job type, salary, location)
+  ✓ Pagination
+  ✓ Social media sharing
+  ✓ Responsive images
+"""
+
+# ============================================================================
+# PART 19: QUICK REFERENCE
+# ============================================================================
+
+"""
+LOGIN CREDENTIALS FOR TESTING:
+
+Admin Panel:
+  URL: http://localhost:8000/admin/
+  (Created during superuser setup)
+
+Job Seeker Demo:
+  Email: jobseeker@example.com
+  Password: password123
+  (Created via load_sample_data.py)
+
+Employer Demo:
+  Email: employer@example.com
+  Password: password123
+  (Created via load_sample_data.py)
+
+IMPORTANT URLS:
+  Home:        http://localhost:8000/
+  Jobs:        http://localhost:8000/jobs/
+  Login:       http://localhost:8000/login/
+  Register:    http://localhost:8000/register/choice/
+  Admin:       http://localhost:8000/admin/
+  Contact:     http://localhost:8000/contact/
+"""
+
+# ============================================================================
+# PART 20: NEXT STEPS
+# ============================================================================
+
+"""
+AFTER SETUP:
+
+1. ✓ Start the server
+   python manage.py runserver
+
+2. ✓ Browse the application
+   http://localhost:8000
+
+3. ✓ Register as Job Seeker or Employer
+   Sign up and fill in your details
+
+4. ✓ Post jobs (as employer)
+   Create sample jobs for testing
+
+5. ✓ Apply for jobs (as job seeker)
+   Browse and apply to jobs
+
+6. ✓ Manage applications
+   View and update application status
+
+7. ✓ Customize the application
+   Edit CSS, templates, and configuration
+
+8. ✓ Deploy to production
+   Follow deployment guide for production setup
+
+9. ✓ Maintain and monitor
+   Regular backups and monitoring
+
+10. ✓ Scale and improve
+    Add new features as needed
+"""
+
+print("""
+╔═══════════════════════════════════════════════════════════════╗
+║         JOBIFY - SETUP GUIDE (COMPLETE)                      ║
+║                                                               ║
+║  Your Jobify application is ready!                          ║
+║  Follow the steps above to get started.                      ║
+║                                                               ║
+║  Questions? Check README.md for more details.                ║
+╚═══════════════════════════════════════════════════════════════╝
+""")
