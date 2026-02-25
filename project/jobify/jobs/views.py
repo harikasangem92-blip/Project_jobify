@@ -451,13 +451,13 @@ def withdraw_application(request, pk):
         messages.error(request, "Only job seekers can decline applications.")
         return redirect('home')
         
-    application = get_object_or_404(Application, pk=pk, applicant=request.user)
+    application = get_object_or_404(JobApplication, pk=pk, applicant=request.user)
     
     if request.method == 'POST':
-        # Change status to 'withdrawn' instead of deleting entirely to keep history
-        application.status = 'withdrawn'
-        application.save()
-        messages.success(request, f"You have successfully declined your application for {application.job.title}.")
+        # Delete the application so it is removed from the dashboard
+        job_title = application.job.title
+        application.delete()
+        messages.success(request, f"You have successfully declined your application for {job_title}.")
         
     return redirect('job_seeker_dashboard')
 
