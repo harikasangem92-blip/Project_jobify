@@ -1,4 +1,4 @@
-{% extends 'jobs/base.html' %}
+﻿{% extends 'jobs/base.html' %}
 {% load static %}
 
 {% block title %}Job Seeker Dashboard - Jobify{% endblock %}
@@ -231,7 +231,10 @@
                                     {% for application in applications %}
                                     <tr>
                                         <td class="fw-bold">{{ application.job.title }}</td>
-                                        <td>{{ application.job.employer.employerprofile.company_name }}</td>
+                                        <td>{% if application.job.employer.employerprofile %}{{
+                                            application.job.employer.employerprofile.company_name }}{% else %}{{
+                                            application.job.employer.get_full_name|default:application.job.employer.email
+                                            }}{% endif %}</td>
                                         <td>
                                             {% if application.status == 'applied' %}
                                             <span class="badge bg-primary">Applied</span>
@@ -245,10 +248,20 @@
                                         </td>
                                         <td class="text-muted small">{{ application.applied_at|date:"M d, Y" }}</td>
                                         <td>
-                                            <a href="{% url 'job_detail' application.job.pk %}"
-                                                class="btn btn-sm btn-outline-primary">
-                                                View Job
-                                            </a>
+                                            <div class="d-flex gap-2">
+                                                <a href="{% url 'job_detail' application.job.pk %}"
+                                                    class="btn btn-sm btn-outline-primary">View Job</a>
+                                                {% if application.status != 'rejected' and application.status != 'accepted' %}
+                                                <form method="post"
+                                                    action="{% url 'withdraw_application' application.pk %}"
+                                                    class="d-inline"
+                                                    onsubmit="return confirm('Are you sure you want to withdraw this application?');">
+                                                    {% csrf_token %}
+                                                    <button type="submit"
+                                                        class="btn btn-sm btn-outline-danger">Decline</button>
+                                                </form>
+                                                {% endif %}
+                                            </div>
                                         </td>
                                     </tr>
                                     {% endfor %}

@@ -405,10 +405,15 @@ def apply_job(request, pk):
                 
             # Send Email Confirmation
             subject = f"Application Received: {job.title}"
+            
+            # Safely get company name (some jobs might be posted by superusers without an EmployerProfile)
+            employer_profile = getattr(job.employer, 'employerprofile', None)
+            company_name = employer_profile.company_name if employer_profile else job.employer.get_full_name() or "the employer"
+
             message = (
                 f"Dear {request.user.first_name},\n\n"
                 f"Thank you for applying to the {job.title} position at "
-                f"{job.employer.employerprofile.company_name}.\n\n"
+                f"{company_name}.\n\n"
                 f"Your application has been received successfully and will be reviewed by the employer. "
                 f"You can track the status of your application from your Jobify dashboard.\n\n"
                 f"Best regards,\nThe Jobify Team"
@@ -436,6 +441,25 @@ def apply_job(request, pk):
     
     context = {'form': form, 'job': job, 'profile': profile}
     return render(request, 'jobs/apply_job.html', context)
+
+@login_required(login_url='login')
+def withdraw_application(request, pk):
+    """
+    Allow job seeker to withdraw/decline their past application
+    """
+    if request.user.role != 'job_seeker':
+        messages.error(request, "Only job seekers can decline applications.")
+        return redirect('home')
+        
+    application = get_object_or_404(Application, pk=pk, applicant=request.user)
+    
+    if request.method == 'POST':
+        # Change status to 'withdrawn' instead of deleting entirely to keep history
+        application.status = 'withdrawn'
+        application.save()
+        messages.success(request, f"You have successfully declined your application for {application.job.title}.")
+        
+    return redirect('job_seeker_dashboard')
 
 
 # ==================== Employer Dashboard Views ====================

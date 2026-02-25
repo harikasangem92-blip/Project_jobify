@@ -18,6 +18,7 @@ urlpatterns = [
     path('dashboard/job-seeker/', views.job_seeker_dashboard, name='job_seeker_dashboard'),
     path('dashboard/job-seeker/profile/edit/', views.job_seeker_profile_edit, name='job_seeker_profile_edit'),
     path('jobs/<int:pk>/apply/', views.apply_job, name='apply_job'),
+    path('applications/<int:pk>/withdraw/', views.withdraw_application, name='withdraw_application'),
     
     # Employer Dashboard
     path('dashboard/employer/', views.employer_dashboard, name='employer_dashboard'),
