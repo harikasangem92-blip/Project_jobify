@@ -1,0 +1,58 @@
+{% extends 'jobs/base.html' %}
+
+{% block title %}Update Application Status - Jobify{% endblock %}
+
+{% block content %}
+<section class="update-status-section py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card border-0 shadow-lg">
+                    <div class="card-header bg-primary text-white fw-bold">
+                        <i class="fas fa-check"></i> Update Application Status
+                    </div>
+                    <div class="card-body p-5">
+                        <form method="post">
+                            {% csrf_token %}
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Applicant</label>
+                                <p class="form-control-plaintext">
+                                    {{ application.applicant.first_name }} {{ application.applicant.last_name }}
+                                </p>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Job Title</label>
+                                <p class="form-control-plaintext">
+                                    {{ application.job.title }}
+                                </p>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="status" class="form-label fw-bold">New Status</label>
+                                <select name="status" class="form-select form-select-lg" required>
+                                    <option value="">-- Select Status --</option>
+                                    <option value="applied">Applied</option>
+                                    <option value="shortlisted">Shortlisted</option>
+                                    <option value="rejected">Rejected</option>
+                                    <option value="accepted">Accepted</option>
+                                </select>
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary btn-lg fw-bold">
+                                    <i class="fas fa-save"></i> Update Status
+                                </button>
+                                <a href="{% url 'job_applicants' application.job.pk %}" class="btn btn-outline-secondary">
+                                    Back
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

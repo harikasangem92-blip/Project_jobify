@@ -1,0 +1,11 @@
+# Virtual Environment
+venv/
+project/jobify/venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Database
+db.sqlite3
+project/jobify/db.sqlite3

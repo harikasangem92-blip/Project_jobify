@@ -1,0 +1,244 @@
+{% extends 'jobs/base.html' %}
+{% load static %}
+
+{% block title %}Post Job - Jobify{% endblock %}
+
+{% block content %}
+<section class="post-job-section py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-lg">
+                    <div class="card-header bg-primary text-white fw-bold">
+                        <i class="fas fa-briefcase"></i> Post a New Job
+                    </div>
+                    <div class="card-body p-5">
+                        <form method="post" novalidate>
+                            {% csrf_token %}
+
+                            {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {{ form.non_field_errors }}
+                            </div>
+                            {% endif %}
+
+                            <h5 class="fw-bold mb-3 text-primary">Job Information</h5>
+
+                            <div class="mb-3">
+                                <label for="{{ form.title.id_for_label }}" class="form-label fw-bold">Job Title</label>
+                                {{ form.title }}
+                                {% if form.title.errors %}
+                                <div class="invalid-feedback d-block">{{ form.title.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="{{ form.description.id_for_label }}" class="form-label fw-bold">Job
+                                    Description</label>
+                                {{ form.description }}
+                                {% if form.description.errors %}
+                                <div class="invalid-feedback d-block">{{ form.description.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="{{ form.required_skills.id_for_label }}" class="form-label fw-bold">Required
+                                    Skills</label>
+                                {{ form.required_skills }}
+                                {% if form.required_skills.errors %}
+                                <div class="invalid-feedback d-block">{{ form.required_skills.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            <hr>
+                            <h5 class="fw-bold mb-3 text-primary">Job Details</h5>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.location.id_for_label }}"
+                                        class="form-label fw-bold">Location</label>
+                                    {{ form.location }}
+                                    {% if form.location.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.location.errors }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.job_type.id_for_label }}" class="form-label fw-bold">Job
+                                        Type</label>
+                                    {{ form.job_type }}
+                                    {% if form.job_type.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.job_type.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="{{ form.experience_required.id_for_label }}"
+                                    class="form-label fw-bold">Experience Required</label>
+                                {{ form.experience_required }}
+                                {% if form.experience_required.errors %}
+                                <div class="invalid-feedback d-block">{{ form.experience_required.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="{{ form.vacancies.id_for_label }}" class="form-label fw-bold">Number of
+                                    Vacancies</label>
+                                {{ form.vacancies }}
+                                {% if form.vacancies.errors %}
+                                <div class="invalid-feedback d-block">{{ form.vacancies.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            <hr>
+                            <h5 class="fw-bold mb-1 text-primary">
+                                <i class="fas fa-rupee-sign me-1"></i> Compensation Information
+                            </h5>
+                            <p class="text-muted small mb-3" id="salary-help-text">
+                                Enter the amount in full numbers (e.g. for ₹15,000 stipend type <strong>15000</strong>,
+                                for ₹5.5 Lakhs salary type <strong>550000</strong>). For internships, this will be
+                                displayed as a monthly stipend.
+                            </p>
+
+                            <div class="row g-3">
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.salary_min.id_for_label }}" class="form-label fw-bold"
+                                        id="salary-min-label">
+                                        Minimum Compensation (₹)
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text fw-bold">₹</span>
+                                        {{ form.salary_min }}
+                                    </div>
+                                    <div id="salary_min_preview" class="text-success small mt-1 fw-semibold"></div>
+                                    {% if form.salary_min.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.salary_min.errors }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.salary_max.id_for_label }}" class="form-label fw-bold"
+                                        id="salary-max-label">
+                                        Maximum Compensation (₹)
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text fw-bold">₹</span>
+                                        {{ form.salary_max }}
+                                    </div>
+                                    <div id="salary_max_preview" class="text-success small mt-1 fw-semibold"></div>
+                                    {% if form.salary_max.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.salary_max.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Quick-fill salary presets -->
+                            <div class="mb-3">
+                                <small class="text-muted fw-semibold">Quick fill:</small>
+                                <div class="d-flex flex-wrap gap-2 mt-1">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary salary-preset"
+                                        data-min="200000" data-max="400000">₹2L – ₹4L</button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary salary-preset"
+                                        data-min="300000" data-max="600000">₹3L – ₹6L</button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary salary-preset"
+                                        data-min="500000" data-max="1000000">₹5L – ₹10L</button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary salary-preset"
+                                        data-min="1000000" data-max="2000000">₹10L – ₹20L</button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary salary-preset"
+                                        data-min="2000000" data-max="5000000">₹20L – ₹50L</button>
+                                </div>
+                                <div class="d-flex flex-wrap gap-2 mt-2">
+                                    <button type="button" class="btn btn-sm btn-outline-info salary-preset"
+                                        data-min="10000" data-max="20000">₹10k – ₹20k</button>
+                                    <button type="button" class="btn btn-sm btn-outline-info salary-preset"
+                                        data-min="15000" data-max="30000">₹15k – ₹30k</button>
+                                    <button type="button" class="btn btn-sm btn-outline-info salary-preset"
+                                        data-min="25000" data-max="50000">₹25k – ₹50k</button>
+                                </div>
+                            </div>
+                    </div>
+
+                    <script>
+                        // Format number to K/Lakh style
+                        function formatINR(val) {
+                            val = parseInt(val);
+                            if (isNaN(val) || val <= 0) return '';
+                            if (val >= 10000000) return '₹' + (val / 10000000).toFixed(2).replace(/\.?0+$/, '') + ' Cr';
+                            if (val >= 100000) return '₹' + (val / 100000).toFixed(2).replace(/\.?0+$/, '') + ' Lakh';
+                            if (val >= 1000) return '₹' + (val / 1000).toFixed(1).replace(/\.?0+$/, '') + 'K';
+                            return '₹' + val;
+                        }
+
+                        // Live preview updater
+                        function bindSalaryPreview(inputId, previewId) {
+                            var input = document.getElementById(inputId);
+                            var preview = document.getElementById(previewId);
+                            if (!input || !preview) return;
+                            input.addEventListener('input', function () {
+                                var f = formatINR(this.value);
+                                var isInternship = document.getElementById('{{ form.job_type.id_for_label }}').value === 'internship';
+                                var suffix = isInternship ? ' /month stipend' : ' per annum';
+                                preview.textContent = f ? '≈ ' + f + suffix : '';
+                            });
+                        }
+
+                        bindSalaryPreview('{{ form.salary_min.id_for_label }}', 'salary_min_preview');
+                        bindSalaryPreview('{{ form.salary_max.id_for_label }}', 'salary_max_preview');
+
+                        // Quick-fill preset buttons
+                        document.querySelectorAll('.salary-preset').forEach(function (btn) {
+                            btn.addEventListener('click', function () {
+                                var minInput = document.getElementById('{{ form.salary_min.id_for_label }}');
+                                var maxInput = document.getElementById('{{ form.salary_max.id_for_label }}');
+                                if (minInput) { minInput.value = this.dataset.min; minInput.dispatchEvent(new Event('input')); }
+                                if (maxInput) { maxInput.value = this.dataset.max; maxInput.dispatchEvent(new Event('input')); }
+                            });
+                        });
+
+                        // Dynamically update labels when job_type changes
+                        document.getElementById('{{ form.job_type.id_for_label }}').addEventListener('change', function () {
+                            var isInternship = this.value === 'internship';
+                            document.getElementById('salary-min-label').textContent = isInternship ? 'Minimum Stipend (₹/month)' : 'Minimum Salary (₹ per annum)';
+                            document.getElementById('salary-max-label').textContent = isInternship ? 'Maximum Stipend (₹/month)' : 'Maximum Salary (₹ per annum)';
+
+                            // re-trigger live preview
+                            var minInput = document.getElementById('{{ form.salary_min.id_for_label }}');
+                            var maxInput = document.getElementById('{{ form.salary_max.id_for_label }}');
+                            if (minInput) minInput.dispatchEvent(new Event('input'));
+                            if (maxInput) maxInput.dispatchEvent(new Event('input'));
+                        });
+                        // Trigger on load
+                        document.getElementById('{{ form.job_type.id_for_label }}').dispatchEvent(new Event('change'));
+                    </script>
+
+
+                    <hr>
+                    <h5 class="fw-bold mb-3 text-primary">Application Deadline</h5>
+
+                    <div class="mb-3">
+                        <label for="{{ form.application_deadline.id_for_label }}"
+                            class="form-label fw-bold">Deadline</label>
+                        {{ form.application_deadline }}
+                        {% if form.application_deadline.errors %}
+                        <div class="invalid-feedback d-block">{{ form.application_deadline.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <hr>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg fw-bold">
+                            <i class="fas fa-check"></i> Post Job
+                        </button>
+                        <a href="{% url 'employer_dashboard' %}" class="btn btn-outline-secondary">
+                            Cancel
+                        </a>
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</section>
+{% endblock %}
