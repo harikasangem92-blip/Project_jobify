@@ -231,6 +231,20 @@ class Job(models.Model):
         return []
 
 
+# Job roles used by the career gap checker
+class JobRole(models.Model):
+    title = models.CharField(max_length=200, unique=True)
+    required_skills = models.TextField(help_text="Enter skills separated by commas")
+
+    class Meta:
+        db_table = 'job_role'
+        verbose_name = 'Job Role'
+        verbose_name_plural = 'Job Roles'
+
+    def __str__(self):
+        return self.title
+
+
 # Job Application Model
 class JobApplication(models.Model):
     """

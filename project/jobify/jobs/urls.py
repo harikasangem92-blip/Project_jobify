@@ -13,6 +13,7 @@ urlpatterns = [
     # Job Listings
     path('jobs/', views.job_list, name='job_list'),
     path('jobs/<int:pk>/', views.job_detail, name='job_detail'),
+    path('skill-gap/', views.skill_gap, name='skill_gap'),
     
     # Job Seeker Dashboard
     path('dashboard/job-seeker/', views.job_seeker_dashboard, name='job_seeker_dashboard'),

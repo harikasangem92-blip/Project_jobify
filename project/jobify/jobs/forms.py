@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from .models import CustomUser, JobSeekerProfile, EmployerProfile, Job, JobApplication, ContactMessage
+from .models import CustomUser, JobSeekerProfile, EmployerProfile, Job, JobApplication, ContactMessage, JobRole
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 
@@ -354,3 +354,22 @@ class ContactForm(forms.ModelForm):
                 'rows': 6
             })
         }
+
+
+class SkillGapForm(forms.Form):
+    skills = forms.CharField(
+        label='Your current skills',
+        required=True,
+        widget=forms.Textarea(attrs={
+            'class': 'form-control',
+            'placeholder': 'Python, SQL, communication',
+            'rows': 4,
+        }),
+        help_text='Separate each skill with a comma.',
+    )
+    job_role = forms.ModelChoiceField(
+        label='Target job role',
+        queryset=JobRole.objects.order_by('title'),
+        empty_label='Choose a role',
+        widget=forms.Select(attrs={'class': 'form-select'}),
+    )

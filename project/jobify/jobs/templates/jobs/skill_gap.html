@@ -1,0 +1,77 @@
+{% extends 'jobs/base.html' %}
+
+{% block title %}Career Gap Checker - Jobify{% endblock %}
+
+{% block content %}
+<section class="py-5 min-vh-100">
+    <div class="container">
+        <div class="row justify-content-center mb-4">
+            <div class="col-lg-8 text-center">
+                <span class="badge bg-primary-subtle text-primary mb-3">CAREER TOOL</span>
+                <h1 class="fw-bold">Find your career gap</h1>
+                <p class="lead text-muted">Choose a target role to see what you already know and which skills to learn next.</p>
+            </div>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+            <div class="col-lg-5">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body p-4 p-lg-5">
+                        <h2 class="h4 fw-bold mb-1">Build your comparison</h2>
+                        <p class="text-muted mb-4">Use skills from your profile, coursework, or experience.</p>
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                {{ form.skills.label_tag }}
+                                {{ form.skills }}
+                                <small class="form-text text-muted">{{ form.skills.help_text }}</small>
+                                {% for error in form.skills.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                            </div>
+                            <div class="mb-4">
+                                {{ form.job_role.label_tag }}
+                                {{ form.job_role }}
+                                {% for error in form.job_role.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100"><i class="fas fa-chart-line me-2"></i>Check my gap</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            {% if results %}
+            <div class="col-lg-7">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body p-4 p-lg-5">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <p class="text-muted small mb-1">YOUR TARGET</p>
+                                <h2 class="h4 fw-bold mb-0">{{ results.job_role.title }}</h2>
+                            </div>
+                            <div class="text-end"><span class="h2 fw-bold text-primary">{{ results.percent }}%</span><br><small class="text-muted">match</small></div>
+                        </div>
+                        <div class="progress mb-4" style="height: 10px;"><div class="progress-bar bg-primary" role="progressbar" style="width: {{ results.percent }}%" aria-valuenow="{{ results.percent }}" aria-valuemin="0" aria-valuemax="100"></div></div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="border rounded p-3 h-100">
+                                    <h3 class="h6 text-success fw-bold"><i class="fas fa-check-circle me-2"></i>You have</h3>
+                                    {% if results.matched %}<ul class="list-unstyled mb-0">{% for skill in results.matched %}<li class="py-1">{{ skill|title }}</li>{% endfor %}</ul>{% else %}<p class="text-muted small mb-0">No matches yet. Every skill is a starting point.</p>{% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="border border-warning rounded p-3 h-100">
+                                    <h3 class="h6 text-warning-emphasis fw-bold"><i class="fas fa-lightbulb me-2"></i>Learn next</h3>
+                                    {% if results.missing %}<ul class="list-unstyled mb-0">{% for skill in results.missing %}<li class="py-1">{{ skill|title }}</li>{% endfor %}</ul>{% else %}<p class="text-success small mb-0">You cover every listed skill for this role.</p>{% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="col-lg-7 d-flex align-items-center"><div class="p-4 text-center text-muted w-100"><i class="fas fa-compass fa-2x text-primary mb-3"></i><p class="mb-0">Your personalized results will appear here.</p></div></div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

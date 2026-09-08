@@ -16,8 +16,9 @@ from .forms import (
     JobSeekerRegistrationForm, EmployerRegistrationForm,
     JobForm, JobApplicationForm, JobSearchForm,
     JobSeekerProfileForm, EmployerProfileForm, ContactForm,
-    CustomUserChangeForm
+    CustomUserChangeForm, SkillGapForm
 )
+from .models import JobRole
 
 
 # ==================== Authentication Views ====================
@@ -221,6 +222,35 @@ def job_detail(request, pk):
         'user_applied': user_applied,
     }
     return render(request, 'jobs/job_detail.html', context)
+
+
+def skill_gap(request):
+    """Compare a user's current skills with those needed for a target role."""
+    form = SkillGapForm(request.POST or None)
+    results = None
+
+    if request.method == 'POST' and form.is_valid():
+        current_skills = {
+            skill.strip().lower()
+            for skill in form.cleaned_data['skills'].split(',')
+            if skill.strip()
+        }
+        job_role = form.cleaned_data['job_role']
+        required_skills = [
+            skill.strip().lower()
+            for skill in job_role.required_skills.split(',')
+            if skill.strip()
+        ]
+        matched = [skill for skill in required_skills if skill in current_skills]
+        missing = [skill for skill in required_skills if skill not in current_skills]
+        results = {
+            'job_role': job_role,
+            'matched': matched,
+            'missing': missing,
+            'percent': round((len(matched) / len(required_skills)) * 100) if required_skills else 0,
+        }
+
+    return render(request, 'jobs/skill_gap.html', {'form': form, 'results': results})
 
 
 # ==================== Job Seeker Dashboard Views ====================

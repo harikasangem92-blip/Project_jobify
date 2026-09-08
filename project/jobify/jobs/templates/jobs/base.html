@@ -28,6 +28,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'job_list' %}">Jobs</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'skill_gap' %}">Career Gap</a>
+                    </li>
                     {% if user.is_authenticated %}
                         {% if user.role == 'job_seeker' %}
                             <li class="nav-item">
