@@ -31,10 +31,22 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'skill_gap' %}">Career Gap</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'learning_roadmap' %}">Learning Roadmap</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'interview_preparation' %}">Interview Prep</a>
+                    </li>
                     {% if user.is_authenticated %}
                         {% if user.role == 'job_seeker' %}
                             <li class="nav-item">
                                 <a class="nav-link" href="{% url 'job_seeker_dashboard' %}">Dashboard</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'application_tracker' %}">My Applications</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'resume_builder' %}">Resume Builder</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="{% url 'job_seeker_profile_edit' %}">Profile</a>

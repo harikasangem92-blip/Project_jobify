@@ -1,0 +1,62 @@
+{% extends 'jobs/base.html' %}
+
+{% block title %}My Applications - Jobify{% endblock %}
+
+{% block content %}
+<section class="py-5 min-vh-100">
+    <div class="container">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+            <div>
+                <span class="badge bg-primary-subtle text-primary mb-2">JOB SEEKER DASHBOARD</span>
+                <h1 class="fw-bold mb-1">My applications</h1>
+                <p class="text-muted mb-0">Follow your applications from submission to decision.</p>
+            </div>
+            <a href="{% url 'job_list' %}" class="btn btn-primary"><i class="fas fa-search me-2"></i>Find more jobs</a>
+        </div>
+
+        <div class="row g-3 mb-4">
+            <div class="col-6 col-lg-3"><div class="card border-0 shadow-sm h-100"><div class="card-body"><small class="text-muted">Total applications</small><div class="h3 fw-bold mb-0">{{ total_applications }}</div></div></div></div>
+            <div class="col-6 col-lg-3"><div class="card border-0 shadow-sm h-100"><div class="card-body"><small class="text-muted">Still active</small><div class="h3 fw-bold text-primary mb-0">{{ active_applications }}</div></div></div></div>
+            <div class="col-6 col-lg-3"><div class="card border-0 shadow-sm h-100"><div class="card-body"><small class="text-muted">Shortlisted</small><div class="h3 fw-bold text-success mb-0">{{ shortlisted }}</div></div></div></div>
+            <div class="col-6 col-lg-3"><div class="card border-0 shadow-sm h-100"><div class="card-body"><small class="text-muted">Accepted</small><div class="h3 fw-bold text-success mb-0">{{ accepted }}</div></div></div></div>
+        </div>
+
+        <div class="d-flex flex-wrap gap-2 mb-3" role="group" aria-label="Filter applications by status">
+            <a href="{% url 'application_tracker' %}" class="btn {% if not status_filter %}btn-dark{% else %}btn-outline-dark{% endif %}">All</a>
+            {% for value, label in status_choices %}
+            <a href="?status={{ value }}" class="btn {% if status_filter == value %}btn-primary{% else %}btn-outline-primary{% endif %}">{{ label }}</a>
+            {% endfor %}
+        </div>
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-0">
+                {% if applications %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light"><tr><th class="ps-4">Position</th><th>Company</th><th>Status</th><th>Last updated</th><th class="text-end pe-4">Action</th></tr></thead>
+                        <tbody>
+                        {% for application in applications %}
+                        <tr>
+                            <td class="ps-4"><strong>{{ application.job.title }}</strong><br><small class="text-muted">{{ application.job.location }}</small></td>
+                            <td>{{ application.job.employer.employerprofile.company_name|default:application.job.employer.get_full_name }}</td>
+                            <td>
+                                {% if application.status == 'rejected' %}<span class="badge bg-danger-subtle text-danger">Rejected</span>
+                                {% elif application.status == 'shortlisted' %}<span class="badge bg-success-subtle text-success">Shortlisted</span>
+                                {% elif application.status == 'accepted' %}<span class="badge bg-success text-white">Accepted</span>
+                                {% else %}<span class="badge bg-primary-subtle text-primary">Applied</span>{% endif %}
+                            </td>
+                            <td class="text-muted small">{{ application.updated_at|date:"M d, Y" }}</td>
+                            <td class="text-end pe-4"><a href="{% url 'job_detail' application.job.pk %}" class="btn btn-sm btn-outline-primary">View job</a></td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center p-5"><i class="fas fa-clipboard-list fa-3x text-muted mb-3"></i><h3 class="h5">No applications found</h3><p class="text-muted">Apply to a job and its progress will appear here.</p><a href="{% url 'job_list' %}" class="btn btn-primary">Browse jobs</a></div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

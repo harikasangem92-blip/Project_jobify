@@ -169,6 +169,26 @@ class JobSeekerProfileForm(forms.ModelForm):
         }
 
 
+class ResumeBuilderForm(forms.ModelForm):
+    class Meta:
+        model = JobSeekerProfile
+        fields = (
+            'resume_headline', 'resume_summary', 'skills', 'experience',
+            'education', 'projects', 'certifications', 'portfolio_url', 'linkedin_url',
+        )
+        widgets = {
+            'resume_headline': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Backend Developer | Python and Django'}),
+            'resume_summary': forms.Textarea(attrs={'class': 'form-control', 'rows': 5, 'placeholder': 'Write a concise 3-4 line summary focused on your impact.'}),
+            'skills': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Python, Django, SQL, Git'}),
+            'experience': forms.Textarea(attrs={'class': 'form-control', 'rows': 7, 'placeholder': 'Company - Role - Dates\nAchievement with a measurable result'}),
+            'education': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Degree - Institution - Graduation year'}),
+            'projects': forms.Textarea(attrs={'class': 'form-control', 'rows': 5, 'placeholder': 'Project - what you built, tools used, and outcome'}),
+            'certifications': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Certification - Issuer - Year'}),
+            'portfolio_url': forms.URLInput(attrs={'class': 'form-control', 'placeholder': 'https://yourportfolio.com'}),
+            'linkedin_url': forms.URLInput(attrs={'class': 'form-control', 'placeholder': 'https://linkedin.com/in/you'}),
+        }
+
+
 class EmployerProfileForm(forms.ModelForm):
     """
     Form for employer profile management

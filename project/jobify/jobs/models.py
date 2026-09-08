@@ -66,6 +66,14 @@ class JobSeekerProfile(models.Model):
         blank=True,
         max_length=500
     )
+    resume_headline = models.CharField(max_length=160, blank=True)
+    resume_summary = models.TextField(blank=True, max_length=1200)
+    education = models.TextField(blank=True, help_text="Degrees, institutions, and dates")
+    experience = models.TextField(blank=True, help_text="Roles, companies, dates, and achievements")
+    projects = models.TextField(blank=True, help_text="Projects, outcomes, and technologies")
+    certifications = models.TextField(blank=True)
+    portfolio_url = models.URLField(blank=True)
+    linkedin_url = models.URLField(blank=True)
     experience_years = models.IntegerField(default=0)
     location = models.CharField(max_length=100, blank=True)
     updated_at = models.DateTimeField(auto_now=True)

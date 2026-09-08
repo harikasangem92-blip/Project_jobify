@@ -14,9 +14,13 @@ urlpatterns = [
     path('jobs/', views.job_list, name='job_list'),
     path('jobs/<int:pk>/', views.job_detail, name='job_detail'),
     path('skill-gap/', views.skill_gap, name='skill_gap'),
+    path('learning-roadmap/', views.learning_roadmap, name='learning_roadmap'),
+    path('resume-builder/', views.resume_builder, name='resume_builder'),
+    path('interview-preparation/', views.interview_preparation, name='interview_preparation'),
     
     # Job Seeker Dashboard
     path('dashboard/job-seeker/', views.job_seeker_dashboard, name='job_seeker_dashboard'),
+    path('applications/', views.application_tracker, name='application_tracker'),
     path('dashboard/job-seeker/profile/edit/', views.job_seeker_profile_edit, name='job_seeker_profile_edit'),
     path('jobs/<int:pk>/apply/', views.apply_job, name='apply_job'),
     path('applications/<int:pk>/withdraw/', views.withdraw_application, name='withdraw_application'),

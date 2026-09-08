@@ -16,7 +16,7 @@ from .forms import (
     JobSeekerRegistrationForm, EmployerRegistrationForm,
     JobForm, JobApplicationForm, JobSearchForm,
     JobSeekerProfileForm, EmployerProfileForm, ContactForm,
-    CustomUserChangeForm, SkillGapForm
+    CustomUserChangeForm, SkillGapForm, ResumeBuilderForm
 )
 from .models import JobRole
 
@@ -253,6 +253,112 @@ def skill_gap(request):
     return render(request, 'jobs/skill_gap.html', {'form': form, 'results': results})
 
 
+def learning_roadmap(request):
+    """Create a phased learning plan from a user's skills and target role."""
+    initial = {}
+    if request.user.is_authenticated and request.user.role == 'job_seeker':
+        profile = getattr(request.user, 'job_seeker_profile', None)
+        if profile and profile.skills:
+            initial['skills'] = profile.skills
+
+    form = SkillGapForm(request.POST or None, initial=initial if request.method == 'GET' else None)
+    roadmap = None
+
+    if request.method == 'POST' and form.is_valid():
+        current_skills = {
+            skill.strip().lower()
+            for skill in form.cleaned_data['skills'].split(',')
+            if skill.strip()
+        }
+        job_role = form.cleaned_data['job_role']
+        required_skills = [
+            skill.strip()
+            for skill in job_role.required_skills.split(',')
+            if skill.strip()
+        ]
+        missing = [skill for skill in required_skills if skill.lower() not in current_skills]
+        phase_count = max(1, min(3, len(missing)))
+        phases = [missing[index::phase_count] for index in range(phase_count)]
+        phase_titles = ['Foundation', 'Build and practice', 'Job-ready polish']
+        phase_descriptions = [
+            'Learn the core concepts and vocabulary for your target role.',
+            'Build a small project that proves you can use these skills together.',
+            'Turn your work into evidence with a portfolio, resume updates, and interview practice.',
+        ]
+        roadmap = {
+            'job_role': job_role,
+            'current_count': len(required_skills) - len(missing),
+            'total_count': len(required_skills),
+            'percent': round(((len(required_skills) - len(missing)) / len(required_skills)) * 100) if required_skills else 0,
+            'phases': [
+                {
+                    'number': index + 1,
+                    'title': phase_titles[index],
+                    'description': phase_descriptions[index],
+                    'skills': skills,
+                }
+                for index, skills in enumerate(phases)
+            ],
+        }
+
+    return render(request, 'jobs/learning_roadmap.html', {'form': form, 'roadmap': roadmap})
+
+
+@login_required(login_url='login')
+def resume_builder(request):
+    """Save and preview a structured resume for a job seeker."""
+    if request.user.role != 'job_seeker':
+        messages.error(request, 'Only job seekers can build a resume.')
+        return redirect('home')
+    profile, _ = JobSeekerProfile.objects.get_or_create(user=request.user)
+    if request.method == 'POST':
+        form = ResumeBuilderForm(request.POST, instance=profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Resume draft saved successfully.')
+            return redirect('resume_builder')
+    else:
+        form = ResumeBuilderForm(instance=profile)
+    return render(request, 'jobs/resume_builder.html', {'form': form, 'profile': profile})
+
+
+INTERVIEW_QUESTIONS = {
+    'technical': [
+        ('Explain a project you built and the decisions you made.', 'Use the problem, your approach, the tools, and a measurable result.'),
+        ('How do you debug a problem you have not seen before?', 'Describe how you reproduce it, isolate the cause, test a fix, and document the result.'),
+        ('How do you keep your technical skills current?', 'Mention a learning habit and show how you apply it in projects or work.'),
+    ],
+    'behavioral': [
+        ('Tell me about yourself.', 'Connect your experience, strongest skills, and the role you want next.'),
+        ('Tell me about a time something went wrong.', 'Use STAR: situation, task, action, result. Focus on what you learned.'),
+        ('How do you handle competing priorities?', 'Explain how you clarify impact, agree on deadlines, and communicate trade-offs.'),
+    ],
+}
+
+
+@login_required(login_url='login')
+def interview_preparation(request):
+    """Create role-specific interview practice prompts."""
+    if request.user.role != 'job_seeker':
+        messages.error(request, 'Only job seekers can use interview preparation.')
+        return redirect('home')
+    role_id = request.GET.get('role') or request.POST.get('role')
+    selected_role = JobRole.objects.filter(pk=role_id).first() if role_id else None
+    questions = []
+    if selected_role:
+        questions = [
+            (f'Which {skill.strip()} concepts would you use in this role?', 'Explain one example from your experience or a small project.')
+            for skill in selected_role.required_skills.split(',')[:4]
+            if skill.strip()
+        ]
+    questions += INTERVIEW_QUESTIONS['technical'] + INTERVIEW_QUESTIONS['behavioral']
+    return render(request, 'jobs/interview_preparation.html', {
+        'roles': JobRole.objects.order_by('title'),
+        'selected_role': selected_role,
+        'questions': questions,
+    })
+
+
 # ==================== Job Seeker Dashboard Views ====================
 
 @login_required(login_url='login')
@@ -327,6 +433,36 @@ def job_seeker_dashboard(request):
         'reminders': reminders,
     }
     return render(request, 'jobs/job_seeker_dashboard.html', context)
+
+
+@login_required(login_url='login')
+def application_tracker(request):
+    """Show a job seeker's applications with status filters and totals."""
+    if request.user.role != 'job_seeker':
+        messages.error(request, 'Only job seekers can view application tracking.')
+        return redirect('home')
+
+    applications = JobApplication.objects.filter(
+        applicant=request.user
+    ).select_related('job', 'job__employer').order_by('-updated_at')
+    status_filter = request.GET.get('status', '').strip()
+    valid_statuses = dict(JobApplication.APPLICATION_STATUS_CHOICES)
+    if status_filter in valid_statuses:
+        applications = applications.filter(status=status_filter)
+    else:
+        status_filter = ''
+
+    all_applications = JobApplication.objects.filter(applicant=request.user)
+    context = {
+        'applications': applications,
+        'status_filter': status_filter,
+        'status_choices': JobApplication.APPLICATION_STATUS_CHOICES,
+        'total_applications': all_applications.count(),
+        'active_applications': all_applications.exclude(status='rejected').count(),
+        'shortlisted': all_applications.filter(status='shortlisted').count(),
+        'accepted': all_applications.filter(status='accepted').count(),
+    }
+    return render(request, 'jobs/application_tracker.html', context)
 
 
 @login_required(login_url='login')

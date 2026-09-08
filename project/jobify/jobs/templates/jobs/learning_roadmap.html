@@ -1,0 +1,53 @@
+{% extends 'jobs/base.html' %}
+
+{% block title %}Personalized Learning Roadmap - Jobify{% endblock %}
+
+{% block content %}
+<section class="py-5 min-vh-100">
+    <div class="container">
+        <div class="row justify-content-center mb-4">
+            <div class="col-lg-8 text-center">
+                <span class="badge bg-success-subtle text-success mb-3">PERSONALIZED PLAN</span>
+                <h1 class="fw-bold">Your learning roadmap</h1>
+                <p class="lead text-muted">Turn your skill gap into a practical sequence of learning, projects, and proof.</p>
+            </div>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body p-4 p-lg-5">
+                        <h2 class="h4 fw-bold mb-1">Start with your target</h2>
+                        <p class="text-muted mb-4">{% if user.is_authenticated and user.role == 'job_seeker' %}Your saved profile skills are already filled in.{% else %}Add the skills you already have.{% endif %}</p>
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="mb-3">{{ form.skills.label_tag }}{{ form.skills }}<small class="form-text text-muted">{{ form.skills.help_text }}</small>{% for error in form.skills.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}</div>
+                            <div class="mb-4">{{ form.job_role.label_tag }}{{ form.job_role }}{% for error in form.job_role.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}</div>
+                            <button type="submit" class="btn btn-success w-100"><i class="fas fa-route me-2"></i>Create my roadmap</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-8">
+                {% if roadmap %}
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body p-4 p-lg-5">
+                        <div class="d-flex justify-content-between align-items-start mb-2"><div><small class="text-muted">TARGET ROLE</small><h2 class="h4 fw-bold mb-0">{{ roadmap.job_role.title }}</h2></div><strong class="h3 text-success mb-0">{{ roadmap.percent }}%</strong></div>
+                        <p class="text-muted small mb-2">{{ roadmap.current_count }} of {{ roadmap.total_count }} role skills covered</p>
+                        <div class="progress" style="height: 10px;"><div class="progress-bar bg-success" style="width: {{ roadmap.percent }}%" role="progressbar" aria-valuenow="{{ roadmap.percent }}" aria-valuemin="0" aria-valuemax="100"></div></div>
+                    </div>
+                </div>
+                <div class="vstack gap-3">
+                    {% for phase in roadmap.phases %}
+                    <div class="card border-0 shadow-sm"><div class="card-body p-4"><div class="row g-3 align-items-start"><div class="col-auto"><div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 42px; height: 42px;">{{ phase.number }}</div></div><div class="col"><h3 class="h5 fw-bold mb-1">{{ phase.title }}</h3><p class="text-muted mb-3">{{ phase.description }}</p>{% if phase.skills %}<div class="d-flex flex-wrap gap-2">{% for skill in phase.skills %}<span class="badge bg-light text-dark border">{{ skill }}</span>{% endfor %}</div>{% else %}<p class="text-success small mb-0"><i class="fas fa-check-circle me-1"></i>This phase is complete.</p>{% endif %}</div></div></div></div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="h-100 d-flex align-items-center justify-content-center text-center p-5 text-muted"><div><i class="fas fa-map-signs fa-3x text-success mb-3"></i><h2 class="h5">Your roadmap will appear here</h2><p>Choose a target role and we will organize your next steps.</p></div></div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

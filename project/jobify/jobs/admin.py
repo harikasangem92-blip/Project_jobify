@@ -3,6 +3,7 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from .models import (
     CustomUser, JobSeekerProfile, EmployerProfile, 
     Job, JobApplication, ContactMessage
+    , JobRole
 )
 
 
@@ -107,6 +108,17 @@ class JobApplicationAdmin(admin.ModelAdmin):
     def job_title(self, obj):
         return obj.job.title
     job_title.short_description = 'Job'
+
+
+@admin.register(JobRole)
+class JobRoleAdmin(admin.ModelAdmin):
+    list_display = ('title', 'required_skills_preview')
+    search_fields = ('title', 'required_skills')
+    ordering = ('title',)
+
+    def required_skills_preview(self, obj):
+        return obj.required_skills[:90]
+    required_skills_preview.short_description = 'Required skills'
 
 
 @admin.register(ContactMessage)
